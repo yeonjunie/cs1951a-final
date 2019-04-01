@@ -56,7 +56,7 @@ for line in read_data:
         if (resources_adding == 0 and resources_removing == 0):
             add_rmv_nulls += 1
 
-        # add to sql database?
+        # TODO add to sql database?
 
 print(len(processed_data)) # = 1510 -- we removed 17 records
 print(len(processed_data[0])) # = 9 -- 0: ID, 1-3: joinable attributes, 4-7: response variables
