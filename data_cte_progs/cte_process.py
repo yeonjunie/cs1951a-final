@@ -108,7 +108,7 @@ def create_table(conn, sql_text):
     try:
         c = conn.cursor()
         c.execute(create_table_sql)
-        c.close()
+        conn.close()
     except Error as e:
         print(e)
 
