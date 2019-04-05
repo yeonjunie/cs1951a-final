@@ -1,19 +1,17 @@
 import numpy as np
 import sqlite3
 
-read_data = []
-with open('FRSS108PUF.dat', 'r') as datafile:
-    for line in datafile:
-        read_data.append(line)
+database = "../all_data.db"
 
-# each line has 1442 chars, 1527 lines total
+def create_connection(db_file):
 
-# quality measures? sum of 10-77
-# barrier measures? 80-93 (providing), 96-111 (student participation)
-# resource limitations for adding + phasing out? 118-123 (adding), 138-143 (removing)
-# all of the above aren't zero-indexed (based on key provided w dataset)
-
-processed_data = []
+    try:
+        conn = sqlite3.connect(db_file)
+        return conn
+    except Error as e:
+        print(e)
+ 
+    return None
 
 def get_score(subarr):
     score = 0
@@ -21,6 +19,37 @@ def get_score(subarr):
         if (elt not in [" ", "-", "8"]):
             score += int(elt)
     return score
+
+def add_data(conn, arr):
+
+    sql = """ INSERT INTO cte(
+                id, 
+                dist_size, 
+                urb, 
+                region, 
+                prog_qual, 
+                barriers_providing, 
+                barriers_participation,
+                resources_adding,
+                resources_removing
+                )
+            VALUES(?,?,?,?,?,?,?,?,?)
+
+    """
+    cur = conn.cursor()
+    cur.execute(sql, task)
+
+
+conn = create_connection(database)
+
+read_data = []
+with open('FRSS108PUF.dat', 'r') as datafile:
+    for line in datafile:
+        read_data.append(line)
+
+# each line has 1442 chars, 1527 lines total
+
+processed_data = []
 
 rsc_add_nulls = 0
 rsc_rmv_nulls = 0
@@ -59,7 +88,10 @@ for line in read_data:
         if (resources_adding == 0 and resources_removing == 0):
             add_rmv_nulls += 1
 
-        # TODO add to sql database?
+        # ADD TO SQL DATABASE
+        add_data(conn, dist_data)
+
+
 
 print(len(processed_data)) # = 1510 -- we removed 17 records
 print(len(processed_data[0])) # = 9 -- 0: ID, 1-3: joinable attributes, 4-7: response variables
@@ -68,17 +100,7 @@ print(rsc_add_nulls) # = 152
 print(rsc_rmv_nulls) # = 152 
 print(add_rmv_nulls) # = 152 --> 152 districts didn't respond 
 
-database = "../all_data.db"
-
-def create_connection(db_file):
-
-    try:
-        conn = sqlite3.connect(db_file)
-        return conn
-    except Error as e:
-        print(e)
- 
-    return None
+##### EVERYTHING BELOW THIS WAS RUN ONCE -- USED TO CREATE THE TABLE
 
 def create_table(conn, sql_text):
     try:
@@ -99,9 +121,8 @@ create_table_sql = """ CREATE TABLE IF NOT EXISTS cte (
                     resources_removing integer
                 ); """
 
-conn = create_connection(database)
 
-if conn is not None:
-    create_table(conn, create_table_sql)
-else:
-    print("ugh")
+# if conn is not None:
+#     create_table(conn, create_table_sql)
+# else:
+#     print("ugh")
