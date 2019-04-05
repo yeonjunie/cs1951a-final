@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <!-- Head contains meta data and imports -->
+  <head>
+    <!-- define character set in use -->
+    <meta charset="utf-8">
+    <title>{% block title %}{% endblock %}Reading Interpretation</title>
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/main.css') }}">
+    <link href="https://fonts.googleapis.com/css?family=EB+Garamond" rel="stylesheet">
+  </head>
+  <!-- Body contains the page content -->
+    <!-- {% block header %}{% endblock %} -->
+  <body>
+    <script src="{{ url_for('static',filename='javascript/jquery-2.1.1.js') }}"></script>
+    <script src="{{ url_for('static',filename='javascript/jquery-2.1.1.js') }}"></script>
+    {% block content %}{% endblock %}
+  </body>
+
+</html>
