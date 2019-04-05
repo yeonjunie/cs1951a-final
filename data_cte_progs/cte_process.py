@@ -1,3 +1,6 @@
+import numpy as np
+import sqlite3
+
 read_data = []
 with open('FRSS108PUF.dat', 'r') as datafile:
     for line in datafile:
@@ -64,3 +67,41 @@ print(len(processed_data[0])) # = 9 -- 0: ID, 1-3: joinable attributes, 4-7: res
 print(rsc_add_nulls) # = 152 
 print(rsc_rmv_nulls) # = 152 
 print(add_rmv_nulls) # = 152 --> 152 districts didn't respond 
+
+database = "../all_data.db"
+
+def create_connection(db_file):
+
+    try:
+        conn = sqlite3.connect(db_file)
+        return conn
+    except Error as e:
+        print(e)
+ 
+    return None
+
+def create_table(conn, sql_text):
+    try:
+        c = conn.cursor()
+        c.execute(create_table_sql)
+    except Error as e:
+        print(e)
+
+create_table_sql = """ CREATE TABLE IF NOT EXISTS cte (
+                    id integer PRIMARY KEY, 
+                    dist_size integer,
+                    urb integer, 
+                    region integer,
+                    prog_qual integer,
+                    barriers_providing integer,
+                    barriers_participation integer,
+                    resources_adding integer,
+                    resources_removing integer
+                ); """
+
+conn = create_connection(database)
+
+if conn is not None:
+    create_table(conn, create_table_sql)
+else:
+    print("ugh")
