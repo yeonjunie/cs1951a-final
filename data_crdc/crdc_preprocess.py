@@ -1,3 +1,5 @@
+import numpy as np
+
 read_data = []
 with open('/users/amypu/documents/Data_Files_and_Layouts/CRDC 2015-16 School Data.csv', 'r') as datafile:
 	for line in datafile:
@@ -18,3 +20,5 @@ for line in read_data:
 
 		processed_line = line[2] + line[4] + line[147:]
 		processed_data.append(processed_line)
+
+print(np.array(processed_data).shape)
