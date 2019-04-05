@@ -20,10 +20,9 @@ def get_score(subarr):
             score += int(elt)
     return score
 
-def add_data(conn, arr):
+def add_data(cur, arr):
 
     sql = """ INSERT INTO cte(
-                id, 
                 dist_size, 
                 urb, 
                 region, 
@@ -31,16 +30,17 @@ def add_data(conn, arr):
                 barriers_providing, 
                 barriers_participation,
                 resources_adding,
-                resources_removing
-                )
-            VALUES(?,?,?,?,?,?,?,?,?)
+                resources_removing)
+
+            VALUES(?,?,?,?,?,?,?,?)
 
     """
-    cur = conn.cursor()
-    cur.execute(sql, task)
+    cur.execute(sql, arr)
+    return cur.lastrowid
 
 
 conn = create_connection(database)
+cur = conn.cursor()
 
 read_data = []
 with open('FRSS108PUF.dat', 'r') as datafile:
@@ -78,6 +78,10 @@ for line in read_data:
         dist_data = [idn, dist_size, urb, region, prog_qual, barriers_providing, barriers_participation, resources_adding, resources_removing]
         processed_data.append(dist_data)
 
+        # ADD TO SQL DATABASE
+        x = add_data(cur, dist_data[1:])
+        print(x)
+
         # count nulls (zero nulls for prog_qual, barriers_providing, barriers_participation)
         if (resources_adding == 0):
             rsc_add_nulls += 1
@@ -88,17 +92,14 @@ for line in read_data:
         if (resources_adding == 0 and resources_removing == 0):
             add_rmv_nulls += 1
 
-        # ADD TO SQL DATABASE
-        add_data(conn, dist_data)
 
 
+# print(len(processed_data)) # = 1510 -- we removed 17 records
+# print(len(processed_data[0])) # = 9 -- 0: ID, 1-3: joinable attributes, 4-7: response variables
 
-print(len(processed_data)) # = 1510 -- we removed 17 records
-print(len(processed_data[0])) # = 9 -- 0: ID, 1-3: joinable attributes, 4-7: response variables
-
-print(rsc_add_nulls) # = 152 
-print(rsc_rmv_nulls) # = 152 
-print(add_rmv_nulls) # = 152 --> 152 districts didn't respond 
+# print(rsc_add_nulls) # = 152 
+# print(rsc_rmv_nulls) # = 152 
+# print(add_rmv_nulls) # = 152 --> 152 districts didn't respond 
 
 ##### EVERYTHING BELOW THIS WAS RUN ONCE -- USED TO CREATE THE TABLE
 
