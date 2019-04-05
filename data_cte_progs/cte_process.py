@@ -36,6 +36,7 @@ def add_data(cur, arr):
 
     """
     cur.execute(sql, arr)
+    conn.commit()
     return cur.lastrowid
 
 
@@ -107,6 +108,7 @@ def create_table(conn, sql_text):
     try:
         c = conn.cursor()
         c.execute(create_table_sql)
+        c.close()
     except Error as e:
         print(e)
 
