@@ -6,9 +6,11 @@ research topics: what are the relationships between demographics and resources/s
 
 # todo
 
-all preprocessing scripts: add to database
+all preprocessing scripts
+    add to database
+    key
 
 crdc_preprocess.py
-    key?
+    -> local file so amy needs 2 run add to db script
 
 arts ed?
