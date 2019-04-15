@@ -1,5 +1,11 @@
+import sqlite3
+import numpy as np
+import matplotlib.pyplot as plt
+from sqlite3 import Error
+
+
 read_data = []
-with open('frss93.dat', 'r') as datafile:
+with open('frss92.dat', 'r') as datafile:
     for line in datafile:
         read_data.append(line)
 
@@ -11,6 +17,7 @@ with open('frss93.dat', 'r') as datafile:
 
 processed_data = []
 
+
 def get_score(subarr):
     score = 0
     for elt in subarr:
@@ -18,16 +25,9 @@ def get_score(subarr):
             score += int(elt)
     return score
 
-nulls1 = 0
-nulls2 = 0
-nulls3 = 0
-nulls4 = 0
-
-add_rmv_nulls = 0
-
 for line in read_data:
 
-    idn = int(line[0:4])
+    idn = int(line[1:5])
 
     if(line[6] == "2"):
 
@@ -47,8 +47,48 @@ for line in read_data:
         processed_data.append(dist_data)
 
 
-
 # no nulls in data
 
-print(len(processed_data)) 
-print(len(processed_data[0]))
+print(len(processed_data)) # = 916
+print(len(processed_data[0])) # = 8
+
+database = "all_data.db"
+
+columns = ('idn', 'dist_size', 'urb', 'region', 'totalComputers', 'computersForInstruction', 'integration', 'training')
+
+def create_connection(db_file):
+    try :
+        # connection = sqlite3.connect("edTech.db")
+        connection = sqlite3.connect(db_file)
+    except Error as e:
+        print(e)
+    # finally:
+    #     connection.close()
+    return connection
+
+def create_table(conn, sql_text):
+    try:
+        c = conn.cursor()
+        c.execute(districtTable)
+        c.close()
+    except Error as e:
+        print(e)
+
+districtTable  = """ CREATE TABLE IF NOT EXISTS edtech(
+    dist_size integer,
+    urb integer,
+    region integer,
+    totalComputers integer NOT NULL ,
+    computersForInstruction integer ,
+    integration integer,
+    training integer,
+    idn integer PRIMARY KEY
+);"""
+
+connection = create_connection("database.db")
+
+if connection is not None:
+    create_table(connection, "database.db")
+else:
+    print("Not connecting")
+
